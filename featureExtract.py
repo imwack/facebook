@@ -131,3 +131,14 @@ def ExtractFeature(UGraph):
                 str(NIdHubH[id])+"\t"+str(NIdAuthH[id])+"\t"+str(CloseCentr)+"\t" + str(Nodes[id])+"\n")
 
     f.close()
+
+
+def ExtractLabel(G, number):
+    path = os.getcwd() + "\\feature\\label.txt"
+    f = open(path, 'a')
+    n = G.GetNodes()
+    for i in range(0,n-number):
+        f.write("0"+"\n")
+    for i in range(0,number):
+        f.write("1"+"\n")
+    f.close()

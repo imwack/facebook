@@ -13,7 +13,8 @@ if __name__ == '__main__':
     #degree_number = GetDegree(G)       #degree-number dic
     #plotDegree(degree_number)
 
-    # ExtractFeature(G)
+    #ExtractFeature(G)
+    ExtractLabel(G, 200)
     # GetNodeDegree(G)
     # GetPageRank(G)
     # GetHits(G)
