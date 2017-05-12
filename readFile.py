@@ -36,7 +36,7 @@ if __name__ == '__main__':
     #print G.GetEdges()  #Total Edges
     f.close()
 
-    injectNode(200, 20, G)   # 注入异常结点
+    injectNode(40, 20, G)   # 注入异常结点
     print G.GetEdges()  # Total Edges
     print G.GetNodes()  # Total Nodes
 

@@ -12,6 +12,21 @@ from pltUtil import *
 import pydot
 import os
 
+
+def split_data(feature, label):
+    n = -400
+    feature_train = feature[n:-20]
+    feature_test = feature[0:n]
+    target_train = label[n:-20]
+    target_test = label[0:n]
+    for i in range(-20,0):
+        feature_test.append(feature[i])
+        target_test.append(label[i])
+    print len(feature_train),len(feature_test)
+    # only 40 anomaly
+    return feature_train, feature_test, target_train, target_test
+
+
 def readFile():
     feature = []
     label = []
@@ -37,27 +52,40 @@ def readFile():
 
 if __name__ == '__main__':
     f,l = readFile()
-    feature = np.array(f)
-    label = np.array(l).reshape((-1,1))
+    # feature = np.array(f)
+    # label = np.array(l).reshape((-1,1))
     # print label.shape
     # print label,feature
     # 拆分训练集和测试集
-    feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.5, random_state=0)
+    # feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.9, random_state=0)
+
+    feature_train, feature_test, target_train, target_test = split_data(f,l)
+
     # print len(feature_train),len(feature_test)
     # 分类型决策树
-    print feature_train.shape,target_train.shape
+    #print feature_train.shape,target_train.shape
 
     clf = RandomForestClassifier(n_estimators=8)
 
     # 训练模型
-    s = clf.fit(feature_train, target_train.ravel())
+    s = clf.fit(feature_train, target_train)
     #print s
 
     # 评估模型准确率
     r = clf.score(feature_test, target_test)
-    print "score:",r
+    print "accuracy:",r
 
-    print '判定结果：%s' % clf.predict(feature_test)
+    print 'Predict class：\n %s' % clf.predict(feature_test)
+    result = clf.predict(feature_test)
+    f = open('result.txt','w')
+    for i in range(len(result)):
+        #print result[i]
+        f.write(str(result[i]))
+        f.write('\t')
+        f.write(str(target_test[i]))
+        f.write('\n')
+    f.close()
+    '''
     print clf.predict_proba(feature_test)
     lst = clf.predict_proba(feature_test)
 
@@ -68,7 +96,7 @@ if __name__ == '__main__':
 
     print 'feature importance：%s' % clf.feature_importances_
 
-    print clf.n_outputs_
+    print clf.n_outputs_    #The number of outputs when fit is performed.
 
 
     def _parallel_helper(obj, methodname, *args, **kwargs):
@@ -88,7 +116,7 @@ if __name__ == '__main__':
 
     # 当判作弊的树多余不判作弊的树时，最终结果是判作弊
     print '判断结果：%s' % clf.classes_.take(np.argmax(proba, axis=1), axis=0)
-
+    '''
     # 把所有的树都保存到word
     for i in xrange(len(clf.estimators_)):
         export_graphviz(clf.estimators_[i], '%d.dot' % i)

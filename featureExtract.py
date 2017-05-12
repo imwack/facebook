@@ -147,3 +147,11 @@ def ExtractLabel(G, number):
     for i in range(0,number):
         f.write("1"+"\n")
     f.close()
+
+def FeatureExtract(number_of_anomaly):
+    FIn = snap.TFIn("./facebook_combined/facebook.graph")
+    G = snap.TUNGraph.Load(FIn)
+    # print G.GetEdges()  #Total Edges
+    ExtractFeature(G)  # 提取特征
+    ExtractLabel(G, number_of_anomaly)  # 提取分类
+    return G
