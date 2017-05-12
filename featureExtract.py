@@ -134,6 +134,11 @@ def ExtractFeature(UGraph):
 
 
 def ExtractLabel(G, number):
+    '''
+    :param G:图 
+    :param number: 注入结点数目 
+    :return: 
+    '''
     path = os.getcwd() + "\\feature\\label.txt"
     f = open(path, 'a')
     n = G.GetNodes()

@@ -2,10 +2,17 @@
 import snap
 from random import randint
 
-def injectNode(number, G):
+def injectNode(number, dest_num, G):
+    '''
+    
+    :param number: 异常节点数目 
+    :param dest_num: 目的节点数目
+    :param G: 图
+    :return: 
+    '''
     n = G.GetNodes()
     dest_node = []
-    for i in range(0, number):
+    for i in range(0, dest_num):
         dest = randint(0, n)
         dest_node.append(dest)
     #print dest_node
@@ -29,7 +36,7 @@ if __name__ == '__main__':
     #print G.GetEdges()  #Total Edges
     f.close()
 
-    injectNode(200,G)
+    injectNode(200, 20, G)   # 注入异常结点
     print G.GetEdges()  # Total Edges
     print G.GetNodes()  # Total Nodes
 

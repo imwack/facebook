@@ -10,11 +10,11 @@ if __name__ == '__main__':
     G = snap.TUNGraph.Load(FIn)
     # print G.GetEdges()  #Total Edges
 
-    #degree_number = GetDegree(G)       #degree-number dic
-    #plotDegree(degree_number)
+    degree_number = GetDegree(G)       #degree-number dic
+    plotDegree(degree_number)
 
-    #ExtractFeature(G)
-    ExtractLabel(G, 200)
+    ExtractFeature(G)           #提取特征
+    ExtractLabel(G, 200)        #提取分类
     # GetNodeDegree(G)
     # GetPageRank(G)
     # GetHits(G)
