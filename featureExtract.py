@@ -106,7 +106,7 @@ def GetClosenessCentr(UGraph):
 
 def ExtractFeature(UGraph):
     path = os.getcwd() + "\\feature\\feature.txt"
-    f = open(path, 'a')
+    f = open(path, 'w')
 
     PRankH = snap.TIntFltH()
     snap.GetPageRank(UGraph, PRankH)
@@ -133,25 +133,44 @@ def ExtractFeature(UGraph):
     f.close()
 
 
-def ExtractLabel(G, number):
+def ExtractLabel(G):
     '''
     :param G:图 
     :param number: 注入结点数目 
     :return: 
     '''
+    anomaly_node = []
+    with open("./facebook_combined/anomaly",'r') as ff:
+        for line in ff:
+            anomaly_node.append(int(line.strip()))
+    ff.close()
+    print anomaly_node
+
     path = os.getcwd() + "\\feature\\label.txt"
-    f = open(path, 'a')
+    f = open(path, 'w')
     n = G.GetNodes()
-    for i in range(0,n-number):
-        f.write("0"+"\n")
-    for i in range(0,number):
-        f.write("1"+"\n")
+    for i in range(0,n):
+        if(i not in anomaly_node):
+            f.write("0"+"\n")
+        else:
+            f.write("1"+"\n")
+
     f.close()
 
-def FeatureExtract(number_of_anomaly):
+def FeatureExtract():
     FIn = snap.TFIn("./facebook_combined/facebook.graph")
     G = snap.TUNGraph.Load(FIn)
     # print G.GetEdges()  #Total Edges
     ExtractFeature(G)  # 提取特征
-    ExtractLabel(G, number_of_anomaly)  # 提取分类
+    ExtractLabel(G)  # 提取分类
     return G
+
+if __name__ == '__main__':
+    G = FeatureExtract()
+
+    # GetNodeDegree(G)
+    # GetPageRank(G)
+    # GetHits(G)
+    # GetDegreeCentr(G)
+    # GetBetweennessCentr(G)
+    # GetClosenessCentr(G)

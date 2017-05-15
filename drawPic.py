@@ -6,17 +6,11 @@ from pltUtil import *
 
 
 if __name__ == '__main__':
-    G = FeatureExtract(40)
+    FIn = snap.TFIn("./facebook_combined/facebook.graph")
+    G = snap.TUNGraph.Load(FIn)
+
     degree_number = GetDegree(G)       #degree-number dic
     plotDegree(degree_number)
-
-
-    # GetNodeDegree(G)
-    # GetPageRank(G)
-    # GetHits(G)
-    # GetDegreeCentr(G)
-    # GetBetweennessCentr(G)
-    # GetClosenessCentr(G)
 
 
     # PlotClustCf(G, "example", "Directed graph - clustering coefficient")

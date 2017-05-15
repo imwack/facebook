@@ -52,23 +52,23 @@ def readFile():
 
 if __name__ == '__main__':
     f,l = readFile()
-    # feature = np.array(f)
-    # label = np.array(l).reshape((-1,1))
+    feature = np.array(f)
+    label = np.array(l).reshape((-1,1))
     # print label.shape
     # print label,feature
     # 拆分训练集和测试集
-    # feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.9, random_state=0)
+    feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.8, random_state=6)
 
-    feature_train, feature_test, target_train, target_test = split_data(f,l)
+    # feature_train, feature_test, target_train, target_test = split_data(f,l)
 
     # print len(feature_train),len(feature_test)
-    # 分类型决策树
+
     #print feature_train.shape,target_train.shape
 
-    clf = RandomForestClassifier(n_estimators=8)
+    clf = RandomForestClassifier(n_estimators=2)    # 5 tree
 
     # 训练模型
-    s = clf.fit(feature_train, target_train)
+    s = clf.fit(feature_train, target_train.ravel())
     #print s
 
     # 评估模型准确率
