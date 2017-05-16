@@ -1,7 +1,7 @@
 #coding=utf-8
 import snap
 import os
-
+from readFile import injectNode
 
 def GetDegree(UGraph):
     """
@@ -104,6 +104,7 @@ def GetClosenessCentr(UGraph):
     f.close
 
 
+# 无向图
 def ExtractFeature(UGraph):
     path = os.getcwd() + "\\feature\\feature.txt"
     f = open(path, 'w')
@@ -128,6 +129,38 @@ def ExtractFeature(UGraph):
         #   degree PRankH  DegCentr NIdHubH NIdAuthH   CloseCentr  GetBetweennessCentr
 
         f.write(str(id)+"\t"+str(NI.GetDeg())+"\t"+str(PRankH[id])+"\t"+str(DegCentr)+"\t"+
+                str(NIdHubH[id])+"\t"+str(NIdAuthH[id])+"\t"+str(CloseCentr)+"\t" + str(Nodes[id])+"\n")
+
+    f.close()
+
+# 有向图
+def ExtractFeatureGraph(Graph):
+    path = os.getcwd() + "\\feature\\feature.txt"
+    f = open(path, 'w')
+
+    print "Get PageRank..."
+    PRankH = snap.TIntFltH()
+    snap.GetPageRank(Graph, PRankH)
+
+    print "Get Hits..."
+    NIdHubH = snap.TIntFltH()
+    NIdAuthH = snap.TIntFltH()
+    snap.GetHits(Graph, NIdHubH, NIdAuthH)
+
+    print "GetBetweenness..."
+    Nodes = snap.TIntFltH()
+    Edges = snap.TIntPrFltH()
+    snap.GetBetweennessCentr(Graph, Nodes, Edges, 1.0)
+
+    print "Write File..."
+    for NI in Graph.Nodes():
+        id = NI.GetId()
+        CloseCentr = snap.GetClosenessCentr(Graph, NI.GetId())
+
+        #print "node: %d centrality: %f" % (NI.GetId(), CloseCentr)
+        #   degree PRankH  DegCentr NIdHubH NIdAuthH   CloseCentr  GetBetweennessCentr
+
+        f.write(str(id)+"\t"+str(NI.GetInDeg())+"\t"+str(NI.GetOutDeg())+"\t"+str(PRankH[id])+"\t"+
                 str(NIdHubH[id])+"\t"+str(NIdAuthH[id])+"\t"+str(CloseCentr)+"\t" + str(Nodes[id])+"\n")
 
     f.close()
@@ -158,11 +191,16 @@ def ExtractLabel(G):
     f.close()
 
 def FeatureExtract():
-    FIn = snap.TFIn("./facebook_combined/facebook.graph")
-    G = snap.TUNGraph.Load(FIn)
-    # print G.GetEdges()  #Total Edges
-    ExtractFeature(G)  # 提取特征
+    # FIn = snap.TFIn("./facebook_combined/facebook.graph")
+    # G = snap.TUNGraph.Load(FIn)
+    G = snap.GenRndGnm(snap.PNGraph, 10000, 100000)
+    print G.GetNodes()
+    print G.GetEdges()  #Total Edges
+    anomaly_node = injectNode(1000, 20, G)   # 注入异常结点
+    # ExtractFeature(G)  # 提取特征
+    ExtractFeatureGraph(G)  # 提取特征
     ExtractLabel(G)  # 提取分类
+
     return G
 
 if __name__ == '__main__':
