@@ -28,6 +28,31 @@ def injectNode(number, dest_num, G):
     f.close()
     return sorted(anomaly_node)
 
+def injectNodeAdv(number, dest_num, G):
+    '''
+    :param number: 异常节点数目 
+    :param dest_num: 目的节点数目
+    :param G: 图
+    :return: 
+    '''
+    n = G.GetNodes()
+    anomaly_node = []
+
+    #print dest_node
+    for i in range(0, number):
+        source = randint(0, n)
+        anomaly_node.append(source)
+        #G.AddNode(i+n)
+        for i in range(0, dest_num):
+            dest = randint(0, n-1)
+            G.AddEdge(source, dest)
+    f = open("./facebook_combined/anomaly",'w')
+    for node in anomaly_node:
+        f.write(str(node)+"\n")
+    f.close()
+    return sorted(anomaly_node)
+
+
 if __name__ == '__main__':
     G = snap.TUNGraph.New()  ##create undirected graph
     #Nodes	4039

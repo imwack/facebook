@@ -2,6 +2,7 @@
 from snap import *
 import numpy as np
 from featureExtract import *
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import export_graphviz
@@ -27,12 +28,10 @@ def split_data(feature, label):
     return feature_train, feature_test, target_train, target_test
 
 
-def readFile():
+def readFile(fpath,lpath):
     feature = []
     label = []
     data = []
-    fpath = os.getcwd()+"\\feature\\feature.txt"
-    lpath = os.getcwd()+"\\feature\\label.txt"
     f = open(fpath,'r')
     l = open(lpath,'r')
 
@@ -51,13 +50,15 @@ def readFile():
 
 
 if __name__ == '__main__':
-    f,l = readFile()
+    fpath = os.getcwd()+"\\feature\\feature.txt"
+    lpath = os.getcwd()+"\\feature\\label.txt"
+    f,l = readFile(fpath,lpath)
     feature = np.array(f)
     label = np.array(l).reshape((-1,1))
     # print label.shape
     # print label,feature
     # 拆分训练集和测试集
-    feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.8, random_state=6)
+    feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.4, random_state=1)
 
     # feature_train, feature_test, target_train, target_test = split_data(f,l)
 
@@ -65,7 +66,7 @@ if __name__ == '__main__':
 
     #print feature_train.shape,target_train.shape
 
-    clf = RandomForestClassifier(n_estimators=2)    # 5 tree
+    clf = RandomForestClassifier(n_estimators=5)    # 5 tree
 
     # 训练模型
     s = clf.fit(feature_train, target_train.ravel())
@@ -77,6 +78,7 @@ if __name__ == '__main__':
 
     print 'Predict class：\n %s' % clf.predict(feature_test)
     result = clf.predict(feature_test)
+    print(np.mean(result == target_test))
     f = open('result.txt','w')
     for i in range(len(result)):
         #print result[i]

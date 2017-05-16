@@ -1,7 +1,7 @@
 #coding=utf-8
 import snap
 import os
-from readFile import injectNode
+from readFile import *
 
 def GetDegree(UGraph):
     """
@@ -128,7 +128,7 @@ def ExtractFeature(UGraph):
         #print "node: %d centrality: %f" % (NI.GetId(), CloseCentr)
         #   degree PRankH  DegCentr NIdHubH NIdAuthH   CloseCentr  GetBetweennessCentr
 
-        f.write(str(id)+"\t"+str(NI.GetDeg())+"\t"+str(PRankH[id])+"\t"+str(DegCentr)+"\t"+
+        f.write(str(NI.GetDeg())+"\t"+str(PRankH[id])+"\t"+str(DegCentr)+"\t"+
                 str(NIdHubH[id])+"\t"+str(NIdAuthH[id])+"\t"+str(CloseCentr)+"\t" + str(Nodes[id])+"\n")
 
     f.close()
@@ -160,7 +160,7 @@ def ExtractFeatureGraph(Graph):
         #print "node: %d centrality: %f" % (NI.GetId(), CloseCentr)
         #   degree PRankH  DegCentr NIdHubH NIdAuthH   CloseCentr  GetBetweennessCentr
 
-        f.write(str(id)+"\t"+str(NI.GetInDeg())+"\t"+str(NI.GetOutDeg())+"\t"+str(PRankH[id])+"\t"+
+        f.write(str(NI.GetInDeg())+"\t"+str(NI.GetOutDeg())+"\t"+str(PRankH[id])+"\t"+
                 str(NIdHubH[id])+"\t"+str(NIdAuthH[id])+"\t"+str(CloseCentr)+"\t" + str(Nodes[id])+"\n")
 
     f.close()
@@ -196,15 +196,18 @@ def FeatureExtract():
     G = snap.GenRndGnm(snap.PNGraph, 10000, 100000)
     print G.GetNodes()
     print G.GetEdges()  #Total Edges
-    anomaly_node = injectNode(1000, 20, G)   # 注入异常结点
+    anomaly_node = injectNodeAdv(1000, 20, G)   # 注入异常结点
     # ExtractFeature(G)  # 提取特征
     ExtractFeatureGraph(G)  # 提取特征
     ExtractLabel(G)  # 提取分类
-
     return G
 
 if __name__ == '__main__':
     G = FeatureExtract()
+
+    FOut = snap.TFOut("./facebook_combined/artificial1.graph")
+    G.Save(FOut)
+    FOut.Flush()
 
     # GetNodeDegree(G)
     # GetPageRank(G)

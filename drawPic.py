@@ -6,7 +6,7 @@ from pltUtil import *
 
 
 if __name__ == '__main__':
-    FIn = snap.TFIn("./facebook_combined/artificial.graph")
+    FIn = snap.TFIn("./facebook_combined/artificial1.graph")
     G = snap.TNGraph.Load(FIn)
 
     degree_number = GetDegree(G)       #degree-number dic
