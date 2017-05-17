@@ -6,22 +6,31 @@ from sklearn.metrics import classification_report
 from randomForest import *
 
 if __name__ == "__main__":
-    fpath = os.getcwd()+"\\feature\\feature.txt"
-    lpath = os.getcwd()+"\\feature\\label.txt"
-    f,l = readFile(fpath,lpath)
+    fpath = os.getcwd()+"\\feature\\facebook1000_feature.txt"
+    lpath = os.getcwd()+"\\feature\\facebook1000_label.txt"
+    f, l = readFile(fpath, lpath)
     feature = np.array(f)
     label = np.array(l).reshape((-1, 1))
     # print label.shape
     # print label,feature
     # 拆分训练集和测试集
-    feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.5,
-                                                                              random_state=0)
-    clf = tree.DecisionTreeClassifier(random_state=0,criterion='entropy')
-    clf.fit(feature_train,target_train)
+    # feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.5, random_state=0)
 
+    f = np.array(l).reshape((7,-1))
+    l = np.array(l).reshape((-1, 1))
+    print f
+    print l
+    feature_train = f[:len(f)]
+    feature_test = f[len(f):]
+    target_train = l[:len(l)]
+    target_test = l[len(l):]
+
+    clf = tree.DecisionTreeClassifier(random_state=0, criterion='entropy')
+    clf.fit(feature_train, target_train)
     r = clf.score(feature_test, target_test)
-    # print "accuracy:",r
+    print "accuracy:",r
 
+    '''
     result = clf.predict(feature_test)
     # print(feature_test)
     # print(target_test)
@@ -31,8 +40,9 @@ if __name__ == "__main__":
     with open("DecisionTree.dot", 'w') as f:
         f = export_graphviz(clf, out_file=f)
 
-    '''''准确率与召回率'''
+    # 准确率与召回率
     precision, recall, thresholds = precision_recall_curve(target_train, clf.predict(feature_train))
 
     answer = clf.predict_proba(feature)[:, 1]
     print(classification_report(label, answer, target_names=['thin', 'fat']))
+    '''

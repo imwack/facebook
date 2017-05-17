@@ -50,15 +50,15 @@ def readFile(fpath,lpath):
 
 
 if __name__ == '__main__':
-    fpath = os.getcwd()+"\\feature\\feature.txt"
-    lpath = os.getcwd()+"\\feature\\label.txt"
+    fpath = os.getcwd()+"\\feature\\facebook1000_feature.txt"   # 特征
+    lpath = os.getcwd()+"\\feature\\facebook1000_label.txt"                  # 标签
     f,l = readFile(fpath,lpath)
     feature = np.array(f)
     label = np.array(l).reshape((-1,1))
     # print label.shape
     # print label,feature
     # 拆分训练集和测试集
-    feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.4, random_state=1)
+    feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.8, random_state=1)
 
     # feature_train, feature_test, target_train, target_test = split_data(f,l)
 
@@ -78,13 +78,18 @@ if __name__ == '__main__':
 
     print 'Predict class：\n %s' % clf.predict(feature_test)
     result = clf.predict(feature_test)
-    print(np.mean(result == target_test))
+    # print target_test.reshape((1,-1))
+    e = target_test.reshape((1,-1))[0]
+    print e
+
+    print(np.mean(e == target_test))
+
     f = open('result.txt','w')
-    for i in range(len(result)):
-        #print result[i]
+    for i in range(len(e)):
+        # print res[i]
         f.write(str(result[i]))
         f.write('\t')
-        f.write(str(target_test[i]))
+        f.write(str(e[i]))
         f.write('\n')
     f.close()
     '''

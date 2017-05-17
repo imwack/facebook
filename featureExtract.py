@@ -134,8 +134,8 @@ def ExtractFeature(UGraph):
     f.close()
 
 # 有向图
-def ExtractFeatureGraph(Graph):
-    path = os.getcwd() + "\\feature\\feature.txt"
+def ExtractFeatureGraph(Graph, filename):
+    path = os.getcwd() + "\\feature\\"+filename+"_feature.txt"
     f = open(path, 'w')
 
     print "Get PageRank..."
@@ -166,7 +166,7 @@ def ExtractFeatureGraph(Graph):
     f.close()
 
 
-def ExtractLabel(G):
+def ExtractLabel(G, filename):
     '''
     :param G:图 
     :param number: 注入结点数目 
@@ -179,7 +179,7 @@ def ExtractLabel(G):
     ff.close()
     print anomaly_node
 
-    path = os.getcwd() + "\\feature\\label.txt"
+    path = os.getcwd() + "\\feature\\"+filename+"_label.txt"
     f = open(path, 'w')
     n = G.GetNodes()
     for i in range(0,n):
@@ -190,7 +190,7 @@ def ExtractLabel(G):
 
     f.close()
 
-def FeatureExtract():
+def FeatureExtract1():
     # FIn = snap.TFIn("./facebook_combined/facebook.graph")
     # G = snap.TUNGraph.Load(FIn)
     G = snap.GenRndGnm(snap.PNGraph, 10000, 100000)
@@ -200,14 +200,28 @@ def FeatureExtract():
     # ExtractFeature(G)  # 提取特征
     ExtractFeatureGraph(G)  # 提取特征
     ExtractLabel(G)  # 提取分类
-    return G
-
-if __name__ == '__main__':
-    G = FeatureExtract()
-
     FOut = snap.TFOut("./facebook_combined/artificial1.graph")
     G.Save(FOut)
     FOut.Flush()
+    return G
+
+def FeatureExtract():
+    FIn = snap.TFIn("./facebook_combined/facebook.graph")
+    G = snap.TUNGraph.Load(FIn)
+    anomaly_node = injectNodeAdv(1000, 20, G)  # 注入异常结点
+    print G.GetNodes()
+    print G.GetEdges()  #Total Edges
+    filename = "facebook1000"
+    ExtractFeatureGraph(G, filename)  # 提取特征
+    ExtractLabel(G, filename)  # 提取分类
+    FOut = snap.TFOut("./facebook_combined/"+filename+".graph")
+    G.Save(FOut)
+    FOut.Flush()
+
+if __name__ == '__main__':
+    # G = FeatureExtract1()
+    FeatureExtract()
+
 
     # GetNodeDegree(G)
     # GetPageRank(G)

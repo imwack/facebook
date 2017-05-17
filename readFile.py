@@ -40,7 +40,7 @@ def injectNodeAdv(number, dest_num, G):
 
     #print dest_node
     for i in range(0, number):
-        source = randint(0, n)
+        source = randint(0, n-1)
         anomaly_node.append(source)
         #G.AddNode(i+n)
         for i in range(0, dest_num):
