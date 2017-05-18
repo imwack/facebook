@@ -13,6 +13,7 @@ This module implements the Local Outlier Factor algorithm.
 from __future__ import division
 import warnings
 import os
+import time
 
 def distance_euclidean(instance1, instance2):
     """Computes the distance between two instances. Instances should be tuples of equal length.
@@ -185,8 +186,17 @@ def readFile(path):
 
 if __name__ == "__main__":
    # print("Running tests, nothing more should appear if everything goes well.")
+    time1 = time.time()
     path = os.getcwd() + "\\feature\\facebook1000_feature.txt"
     instances = readFile(path)
-    l = outliers(1, instances)
+    l = outliers(3, instances)
+    outfile = "lof_facebook1000_withk3.txt"
+    f = open(outfile,'w')
     for outlier in l:
+        content = str(outlier["index"])+"\t"+str(outlier["instance"])+"\t"+str(outlier["lof"])+"\n"
+        f.write(content)
         print outlier["index"],outlier["instance"],outlier["lof"]
+    f.close()
+    time2 = time.time()
+    print time1,time2
+    print time1-time2
