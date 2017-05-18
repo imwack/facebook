@@ -1,5 +1,5 @@
-#!/usr/bin/python
 # -*- coding: utf8 -*-
+
 """
 lof
 ~~~~~~~~~~~~
@@ -12,6 +12,7 @@ This module implements the Local Outlier Factor algorithm.
 """
 from __future__ import division
 import warnings
+import os
 
 def distance_euclidean(instance1, instance2):
     """Computes the distance between two instances. Instances should be tuples of equal length.
@@ -161,6 +162,7 @@ def outliers(k, instances, **kwargs):
     instances_value_backup = instances
     outliers = []
     for i, instance in enumerate(instances_value_backup):
+        print i
         instances = list(instances_value_backup)
         instances.remove(instance)
         l = LOF(instances, **kwargs)
@@ -169,3 +171,22 @@ def outliers(k, instances, **kwargs):
             outliers.append({"lof": value, "instance": instance, "index": i})
     outliers.sort(key=lambda o: o["lof"], reverse=True)
     return outliers
+
+def readFile(path):
+    instances = []
+    with open(path) as f:
+        for line in f:
+            temp = [float(x) for x in line.split('\t')]
+            instances.append(temp)
+    print instances
+    return instances
+
+
+
+if __name__ == "__main__":
+   # print("Running tests, nothing more should appear if everything goes well.")
+    path = os.getcwd() + "\\feature\\facebook1000_feature.txt"
+    instances = readFile(path)
+    l = outliers(1, instances)
+    for outlier in l:
+        print outlier["index"],outlier["instance"],outlier["lof"]

@@ -54,6 +54,9 @@ def injectNodeAdv(number, dest_num, G):
 
 
 if __name__ == '__main__':
+    # FIn = snap.TFIn("./facebook_combined/facebook.graph")
+    # G = snap.TUNGraph.Load(FIn)
+
     G = snap.TUNGraph.New()  ##create undirected graph
     #Nodes	4039
     for i in range(0,4039):
