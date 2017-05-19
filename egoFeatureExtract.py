@@ -23,7 +23,8 @@ def extractFeature(UGraph):
 
     for NI in UGraph.Nodes():
         id = NI.GetId()  # current node id
-        print "Extract Local Feature:",id
+        if(id%100==0):
+            print "Extract Feature:",id
         # local feature:
         # degree/PR/DegreeCentr/ClosenessCentr/FarCentr/Hub/Auth/Centrality
         temp_feature = []
@@ -38,17 +39,17 @@ def extractFeature(UGraph):
         temp_feature.append(NIdHubH[id])# Hub
         temp_feature.append(NIdAuthH[id]) # Auth
         temp_feature.append(Nodes[id])  # BetweennessCentr
-        temp_feature.append(NIdEigenH)  # EigenVectorCentr
+        temp_feature.append(NIdEigenH[id])  # EigenVectorCentr
         temp_feature.append(GetNodeEcc(UGraph, id, False))  # node eccentricity
 
         # Ego Feature
-        print "Extract Egonet Feature"
         ego = TUNGraph.New()    # new egonet
         ego.AddNode(id)         # add current node
         inD = NI.GetInDeg()
         for i in range(inD):
             NbrNId = NI.GetInNId(i)     # neighbor node id
-            ego.AddNode(NbrNId)         # add neighbor node
+            if not ego.IsNode(NbrNId):
+                ego.AddNode(NbrNId)         # add neighbor node
 
         ArndEdges = 0;
         for i in range(inD):
