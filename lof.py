@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf8 -*-
 """
 lof
@@ -12,6 +11,8 @@ This module implements the Local Outlier Factor algorithm.
 """
 from __future__ import division
 import warnings
+import os
+import time
 
 def distance_euclidean(instance1, instance2):
     """Computes the distance between two instances. Instances should be tuples of equal length.
@@ -161,6 +162,7 @@ def outliers(k, instances, **kwargs):
     instances_value_backup = instances
     outliers = []
     for i, instance in enumerate(instances_value_backup):
+        print i
         instances = list(instances_value_backup)
         instances.remove(instance)
         l = LOF(instances, **kwargs)
@@ -169,3 +171,30 @@ def outliers(k, instances, **kwargs):
             outliers.append({"lof": value, "instance": instance, "index": i})
     outliers.sort(key=lambda o: o["lof"], reverse=True)
     return outliers
+
+def readFile(path):
+    ins = []
+    with open(path) as f:
+        temp = []
+        for line in f:
+            temp = [float(l) for l in line.strip().split("\t") ]
+            ins.append(temp)
+    return ins
+
+if __name__ == "__main__":
+    t1 = time.time()
+    path = os.getcwd() + "\\feature\\feature.txt"
+    instances = readFile(path)
+    instances = instances[:3000]
+    print len(instances)
+    l = outliers(1, instances)
+    f = open("lof_result_feature10000_3000.txt",'w')
+    for outlier in l:
+        s = str(outlier["index"])+"\t"+str(outlier["instance"])+"\t"+str(outlier["lof"])+"\n"
+        f.write(s)
+        print s
+        #print outlier["index"],outlier["instance"],outlier["lof"]
+    f.close()
+    t2 = time.time()
+    print t1,t2,t2-t1
+    # 5000node 7782.55500007s
