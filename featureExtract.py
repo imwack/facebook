@@ -215,15 +215,15 @@ def WriteFeature(features, anomaly_node, featureFile, labelFile, G, id=False):
 
 if __name__ == '__main__':
     # 读取图
-    filename = "Wiki-Vote"
-    numberOfNodes = 7115    #facebook 4039
+    filename = "EmailEnron"
+    numberOfNodes = 36692    #facebook 4039
     path = os.getcwd() + "\\graph\\" + filename
     # G = loadUNGraph(path, numberOfNodes)
     G,NodeId = loadDGraph(path, numberOfNodes) #
     # 随机生成图
 
     # 注入节点 写入anomaly文件
-    numberOfAnomaly = 400
+    numberOfAnomaly = 2000
     numberOfDest = 20
     print G.GetEdges(),G.GetNodes()
     # anomaly_node = injectNode(numberOfAnomaly, numberOfDest, G, filename)
