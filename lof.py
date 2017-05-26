@@ -1,5 +1,4 @@
 # -*- coding: utf8 -*-
-
 """
 lof
 ~~~~~~~~~~~~
@@ -174,29 +173,33 @@ def outliers(k, instances, **kwargs):
     return outliers
 
 def readFile(path):
-    instances = []
+    ins = []
     with open(path) as f:
+        temp = []
         for line in f:
-            temp = [float(x) for x in line.split('\t')]
-            instances.append(temp)
-    print instances
-    return instances
-
-
+            temp = [float(l) for l in line.strip().split("\t") ]
+            ins.append(temp)
+    return ins
 
 if __name__ == "__main__":
-   # print("Running tests, nothing more should appear if everything goes well.")
-    time1 = time.time()
-    path = os.getcwd() + "\\feature\\facebook1000_feature.txt"
+    t1 = time.time()
+    path = os.getcwd() + "\\feature\\feature.txt"
     instances = readFile(path)
-    l = outliers(3, instances)
-    outfile = "lof_facebook1000_withk3.txt"
-    f = open(outfile,'w')
+    instances = instances[:5000]
+    print len(instances)
+    l = outliers(1, instances)
+    f = open("lof_result_feature10000_5000.txt",'w')
     for outlier in l:
-        content = str(outlier["index"])+"\t"+str(outlier["instance"])+"\t"+str(outlier["lof"])+"\n"
-        f.write(content)
-        print outlier["index"],outlier["instance"],outlier["lof"]
+        s = str(outlier["index"])+"\t"+str(outlier["instance"])+"\t"+str(outlier["lof"])+"\n"
+        f.write(s)
+        print s
+        #print outlier["index"],outlier["instance"],outlier["lof"]
     f.close()
-    time2 = time.time()
-    print time1,time2
-    print time1-time2
+    t2 = time.time()
+    print t1,t2,t2-t1
+    # 5000node  6567.85299993 5253.83599997
+    # 4000      4468.24099994
+    # 3000      2670.11100006
+    # 2000      1309.29999995
+    # 1000      304.3349998
+
