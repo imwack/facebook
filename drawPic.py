@@ -6,9 +6,9 @@ from pltUtil import *
 
 
 if __name__ == '__main__':
-    FIn = snap.TFIn("./facebook_combined/facebook1000.graph")
-    # G = snap.TNGraph.Load(FIn)
-    G = snap.TUNGraph.Load(FIn)
+    FIn = snap.TFIn("./facebook_combined/artificial1.graph")
+    G = snap.TNGraph.Load(FIn)
+
     degree_number = GetDegree(G)       #degree-number dic
     plotDegree(degree_number)
 

@@ -3,6 +3,8 @@ import snap
 import os
 from random import randint
 from egoFeatureExtract import extractFeature
+from egoFeatureExtract import extractGraphFeature
+
 from egoFeatureExtract import extractFeaturewithId
 
 # 无向图
