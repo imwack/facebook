@@ -182,7 +182,7 @@ def extractEgoFeature(UGraph):
             if not ego.IsNode(NbrNId):
                 ego.AddNode(NbrNId)         # add neighbor node
 
-        ArndEdges = 0;
+        ArndEdges = 0
         for i in range(inD):
             NbrNId = NI.GetInNId(i)
             NbrNode = UGraph.GetNI(NbrNId)
