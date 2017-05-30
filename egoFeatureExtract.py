@@ -217,3 +217,8 @@ if __name__=="__main__":
     f.close()
     t2 = time.time()
     print t1,t2,t2-t1 # 4038 nodes, 27.6970000267
+if __name__ =="__main__":
+    filename = "facebook1000.graph"
+    path = os.getwcd() + "\\facebook_combined\\"+filename
+    G = readTUNGraphFile(path)
+    feature = extractTUNGraph(G)

@@ -1,5 +1,7 @@
 #coding=utf-8
 import networkx as nx
+from operator import itemgetter
+import matplotlib.pyplot as plt
 
 def GenRandGraph():
     G = nx.random_graphs.barabasi_albert_graph(1000,3)  # 生成一个n=1000，m=3的BA无标度网络
@@ -35,5 +37,23 @@ def exampleDiGraph():
     print DG.neighbors(1)
 
 
+def genEgonet(edges, nodes):
+    G = nx.generators.barabasi_albert_graph(edges, nodes)
+
+    node_and_degree = G.degree()
+    (largest_hub, degree) = sorted(node_and_degree.items(), key=itemgetter(1))[-1]
+    # Create ego graph of main hub
+    hub_ego = nx.ego_graph(G, largest_hub)
+    # Draw graph
+    pos = nx.spring_layout(hub_ego)
+    nx.draw(hub_ego, pos, node_color='b', node_size=50, with_labels=False)
+    # Draw ego as large and red
+    nx.draw_networkx_nodes(hub_ego, pos, nodelist=[largest_hub], node_size=300, node_color='r')
+    # xmin, xmax = plt.xlim()  # return the current xlim
+
+    plt.savefig('ego_graph.png')
+    plt.show()
+
 if __name__=="__main__":
-    exampleDiGraph()
+    # exampleDiGraph()
+    genEgonet(400,2)
