@@ -1,11 +1,11 @@
 #coding=utf-8
 import snap
 import os
+import time
 from random import randint
 from egoFeatureExtract import extractFeature
 from egoFeatureExtract import extractGraphFeature
-
-from egoFeatureExtract import extractFeaturewithId
+from egoFeatureExtract import extractFeatureWithId
 
 # 无向图
 def ExtractFeature(UGraph):
@@ -209,18 +209,20 @@ def WriteFeature(features, anomaly_node, featureFile, labelFile, G):
 
 if __name__ == '__main__':
     # 读取图
-    filename = "Wiki-Vote"
-    numberOfNodes = 7115    #facebook 4039
+    filename = "EmailEnron"
+    numberOfNodes = 36692    #facebook 4039
     path = os.getcwd() + "\\graph\\" + filename
     # G = loadUNGraph(path, numberOfNodes)
-    G, NodeId = loadDGraph(path, numberOfNodes) #
-    # 随机生成图
+    G, NodeId = loadDGraph(path, numberOfNodes)
 
+    # 随机生成图
+    # G = snap.GenRndGnm(snap.PNGraph, numberOfNodes, numberOfNodes*10)
+    # NodeId = [i for i in range(numberOfNodes)]
     # 注入节点 写入anomaly文件
-    numberOfAnomaly = 400
-    numberOfDest = 20
+    numberOfAnomaly = 2000
+    numberOfDest = 30
     print G.GetEdges()
-    #anomaly_node = injectNode(numberOfAnomaly, numberOfDest, G, filename)
+    # anomaly_node = injectNode(numberOfAnomaly, numberOfDest, G, filename)
     anomaly_node = injectNodeWithNID(numberOfAnomaly, numberOfDest, G, filename, NodeId)
     print "After inject:",G.GetEdges()
 
@@ -233,8 +235,11 @@ if __name__ == '__main__':
 
     # 提取特征
     print "Begin extract feature..."
-    feature = extractFeaturewithId(G)
-
+    t1 =time.time()
+    # feature = extractFeatureWithId(G)
+    feature  = extractGraphFeature(G)
+    t2 = time.time()
+    print t2-t1
     # 写入特征文件
     featureFile = ".\\feature\\"+filename+str(numberOfAnomaly)
     labelFile = ".\\feature\\"+filename+str(numberOfAnomaly)+"label"
@@ -246,3 +251,5 @@ if __name__ == '__main__':
     # GetDegreeCentr(G)
     # GetBetweennessCentr(G)
     # GetClosenessCentr(G)
+
+# 579.279000044

@@ -187,7 +187,7 @@ if __name__ == "__main__":
     instances = readFile(path)
     instances = instances[:5000]
     print len(instances)
-    l = outliers(1, instances)
+    l = outliers(2, instances)
     f = open("lof_result_feature10000_5000.txt",'w')
     for outlier in l:
         s = str(outlier["index"])+"\t"+str(outlier["instance"])+"\t"+str(outlier["lof"])+"\n"
@@ -197,10 +197,8 @@ if __name__ == "__main__":
     f.close()
     t2 = time.time()
     print t1,t2,t2-t1
-    # 5000node  5253.83599997   5183.4059999
-    # 4000      4468.24099994   2940.92799997
-    # 3000      2670.11100006   1786.24199986
-    # 2000      1309.29999995   968.773000002
-    # 1000      304.3349998     208.134000063
-
-
+    # 5000node  5253.83599997   5183.4059999    10085.003
+    # 4000      4468.24099994   2940.92799997   5650.85800004
+    # 3000      2670.11100006   1786.24199986   3296.91100001
+    # 2000      1309.29999995   968.773000002   1444.28500009
+    # 1000      304.3349998     208.134000063   355.562999964

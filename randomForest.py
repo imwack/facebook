@@ -1,131 +1,176 @@
 #coding=utf-8
-from snap import *
 import numpy as np
-from featureExtract import *
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
+import pydotplus
+from sklearn import preprocessing
+from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import export_graphviz
-from sklearn.externals.joblib import Parallel, delayed
-from sklearn.externals.six import StringIO
+from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-from pltUtil import *
-import pydot
-import os
+import time
+from sklearn.metrics import *
+from sklearn.tree import export_graphviz
+
+n_classes = 2
+plot_colors = "bry"
+plot_step = 0.02
+
+if __name__=="__main__":
+    t1 = time.time()
+    # 读取特征
+    featurePath = ".//feature//"+"EmailEnron2000"
+    labelPath = ".//feature//"+"EmailEnron2000label"
+    data = np.loadtxt(featurePath)
+    target = np.loadtxt(labelPath)
+    for i in range(len(target)):
+        if target[i]==1:
+            target[i]=0
+        else:
+            target[i]=1
+    data = np.delete(data,3,axis=1)
+    print data.shape
+    feature_names = ["InDegree","OutDegree","PageRank","Closeness","Hubs","Authority","Eccentricity","EgoOutD","EgoNodes","EgoEdges"]
+    target_names = ["normal","anomaly"]
+    # 正则化特征
+    print "MinMaxScaler..."
+    min_max_scaler = preprocessing.MinMaxScaler()
+    data = min_max_scaler.fit_transform(data)
+    # print data
+
+    # 分类
+    print "train_test_split..."
+    X_train, X_test, y_train, y_test = train_test_split(data, target, test_size = 0.8, random_state = 10)
+    # X_train = data[:len(data)/2]
+    # X_test = data[len(data)/2:]
+    # y_train = target[:len(target) / 2]
+    # y_test = target[len(target) / 2:]
+    # print X_train.shape,X_test.shape,y_train.shape,y_test.shape
+
+    clf = RandomForestClassifier(n_estimators=6,criterion="gini",max_depth=4)
+    clf = clf.fit(X_train, y_train)
+
+    # print clf.score(X_test,y_test)
+    y_pred = clf.predict(X_test)
+    y_score = clf.predict_proba(X_test)
+    y_socre1 = y_score
+    y_score = y_score[:,0]
+    y_score.reshape(len(y_score),1)
+    t2 = time.time()
+    print "time:",t2-t1
+    # 分析
+    print average_precision_score(y_test,y_score)
+    print accuracy_score(y_test, y_pred)
+    print recall_score(y_test, y_pred, average='binary')
+    print f1_score(y_test, y_pred, average='binary')
+    fpr, tpr, thresholds = roc_curve(y_test, y_score, pos_label=0)
+    # print fpr,tpr
+    # plt.plot(fpr,tpr,'-')
+    # plt.show()
+    print auc(fpr, tpr)
+
+    importances = clf.feature_importances_
 
 
-def split_data(feature, label):
-    n = -400
-    feature_train = feature[n:-20]
-    feature_test = feature[0:n]
-    target_train = label[n:-20]
-    target_test = label[0:n]
-    for i in range(-20,0):
-        feature_test.append(feature[i])
-        target_test.append(label[i])
-    print len(feature_train),len(feature_test)
-    # only 40 anomaly
-    return feature_train, feature_test, target_train, target_test
+    #Precision recall
 
+    # Compute Precision-Recall and plot curve
+    precision = dict()
+    recall = dict()
+    average_precision = dict()
 
-def readFile(fpath,lpath):
-    feature = []
-    label = []
-    data = []
-    f = open(fpath,'r')
-    l = open(lpath,'r')
+    precision["micro"], recall["micro"], _ = precision_recall_curve(y_test.ravel(),
+                                                                    y_score.ravel())
+    average_precision["micro"] = average_precision_score(y_test, y_score,
+                                                         average="micro")
 
-    data = [line.strip().split('\t') for line in f]
-    feature = [[float(x) for x in row[1:]] for row in data]
-
-    try:
-        for line in l:
-            la = line.strip()
-            label.append(int(la))
-    finally:
-        l.close()
-
-    #print len(feature),len(feature[0])
-    return feature,label
-
-
-if __name__ == '__main__':
-    fpath = os.getcwd()+"\\feature\\facebook1000_feature.txt"   # 特征
-    lpath = os.getcwd()+"\\feature\\facebook1000_label.txt"                  # 标签
-    f,l = readFile(fpath,lpath)
-    feature = np.array(f)
-    label = np.array(l).reshape((-1,1))
-    # print label.shape
-    # print label,feature
-    # 拆分训练集和测试集
-    feature_train, feature_test, target_train, target_test = train_test_split(feature, label, test_size=0.8, random_state=1)
-
-    # feature_train, feature_test, target_train, target_test = split_data(f,l)
-
-    # print len(feature_train),len(feature_test)
-
-    #print feature_train.shape,target_train.shape
-
-    clf = RandomForestClassifier(n_estimators=5)    # 5 tree
-
-    # 训练模型
-    s = clf.fit(feature_train, target_train.ravel())
-    #print s
-
-    # 评估模型准确率
-    r = clf.score(feature_test, target_test)
-    print "accuracy:",r
-
-    print 'Predict class：\n %s' % clf.predict(feature_test)
-    result = clf.predict(feature_test)
-    # print target_test.reshape((1,-1))
-    e = target_test.reshape((1,-1))[0]
-    print e
-
-    print(np.mean(e == target_test))
-
-    f = open('result.txt','w')
-    for i in range(len(e)):
-        # print res[i]
-        f.write(str(result[i]))
-        f.write('\t')
-        f.write(str(e[i]))
-        f.write('\n')
+    # print precision["micro"], recall["micro"]
+    f = open("precision","a")
+    for p in precision["micro"]:
+        f.write(str(p))
+        f.write("\t")
+    f.write("\n")
+    for p in recall["micro"]:
+        f.write(str(p))
+        f.write("\t")
+    f.write("\n")
     f.close()
+    # Plot Precision-Recall curve for each class
+    plt.clf()
+    plt.plot(recall["micro"], precision["micro"], color='gold', #lw=2,
+             label='micro-average Precision-recall curve (area = {0:0.2f})'
+                   ''.format(average_precision["micro"]))
+    # for i, color in zip(range(n_classes), colors):
+    #     plt.plot(recall[i], precision[i], color=color, lw=lw,
+    #              label='Precision-recall curve of class {0} (area = {1:0.2f})'
+    #                    ''.format(i, average_precision[i]))
+
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.title('Extension of Precision-Recall curve to multi-class')
+    plt.legend(loc="lower right")
+    plt.show()
+
+
     '''
-    print clf.predict_proba(feature_test)
-    lst = clf.predict_proba(feature_test)
+    # Plot the feature importances of the forest
+    plt.figure()
+    plt.title("Feature importances of Directed Graph")
+    indices = [i for i in range(len(feature_names))]
+    plt.bar(indices,importances,
+            color="r", align="center")
+    plt.xticks(range(len(feature_names)), feature_names,rotation=30)
+    plt.xlim([-1, len(feature_names)])
+    plt.show()
 
-    #print 'list of DecisionTreeClassifier:%s' % clf.estimators_
-
-    # print clf.classes_
-    # print clf.n_classes_
-
-    print 'feature importance：%s' % clf.feature_importances_
-
-    print clf.n_outputs_    #The number of outputs when fit is performed.
-
-
-    def _parallel_helper(obj, methodname, *args, **kwargs):
-        return getattr(obj, methodname)(*args, **kwargs)
-
-
-    all_proba = Parallel(n_jobs=10, verbose=clf.verbose, backend="threading")(
-        delayed(_parallel_helper)(e, 'predict_proba', feature_test) for e in clf.estimators_)
-    print '所有树的判定结果：%s' % all_proba
-
-    proba = all_proba[0]
-    for j in range(1, len(all_proba)):
-        proba += all_proba[j]
-    proba /= len(clf.estimators_)
-    print '数的棵树：%s ， 判不作弊的树比例：%s' % (clf.n_estimators, proba[0, 0])
-    print '数的棵树：%s ， 判作弊的树比例：%s' % (clf.n_estimators, proba[0, 1])
-
-    # 当判作弊的树多余不判作弊的树时，最终结果是判作弊
-    print '判断结果：%s' % clf.classes_.take(np.argmax(proba, axis=1), axis=0)
-    '''
-    # 把所有的树都保存到word
     for i in xrange(len(clf.estimators_)):
-        export_graphviz(clf.estimators_[i], '%d.dot' % i)
-        # cmd = "dot -Tpdf %d.dot -o %d.pfd" % (i,i)
-        # os.system(cmd)
+        dot_data = export_graphviz(clf.estimators_[i], out_file=None,
+                                        feature_names = feature_names,
+                                        class_names = target_names,
+                                        filled=True, rounded=True,)
+        graph = pydotplus.graph_from_dot_data(dot_data)
+        graph.write_pdf("DecisionTree %d.pdf" %i)
+    '''
+
+    '''
+    for pairidx, pair in enumerate([[0, 1], [0, 2], [0, 3],[0,4],[0,5],[0,6],[0,7],[0,8],
+                                    [1, 2], [1, 3],[1,4],[1,5],[1,6],[1,7],[1,8],
+                                    [2, 3],[2,4],[2,5],[2,6],[2,7],[2,8],
+                                    [3,4],[3,5],[3,6],[3,7],[3,8],[4,5],[4,6],[4,7],[4,8],
+                                    [5,6],[5,7],[5,8],[6,7],[6,8],[7,8]
+                                    ]):
+        # We only take the two corresponding features
+        X = data[:, pair]
+        y = target
+
+        # Train
+        clf = tree.DecisionTreeClassifier().fit(X, y)
+
+        # Plot the decision boundary
+        plt.subplot(9, 4, pairidx + 1)
+
+        x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+        y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+                             np.arange(y_min, y_max, plot_step))
+
+        Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = Z.reshape(xx.shape)
+        cs = plt.contourf(xx, yy, Z, cmap=plt.cm.Paired)
+
+        plt.xlabel(feature_names[pair[0]])
+        plt.ylabel(feature_names[pair[1]])
+        plt.axis("tight")
+
+        # Plot the training points
+        for i, color in zip(range(n_classes), plot_colors):
+            idx = np.where(y == i)
+            plt.scatter(X[idx, 0], X[idx, 1], c=color, label=target_names[i],
+                        cmap=plt.cm.Paired)
+
+        plt.axis("tight")
+
+    plt.suptitle("Decision surface of a decision tree using paired features")
+    plt.legend()
+    plt.show()
+    '''
