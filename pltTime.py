@@ -21,6 +21,7 @@ t1000 = 208.134000063
 def plotLOF():
     x = [1000, 2000, 3000, 4000, 5000]
     y = [208.134000063, 908.773000002, 1786.24199986, 2940.92799997, 5183.4059999]
+    y1 = [355.562999964,1444.28500009,3296.91100001, 5650.85800004,10085.003]
     # ax = plt.subplot(1,1,1)
     ax = plt.subplot(111)
     # ax.xaxis.set_major_locator(xmajorLocator)
@@ -29,9 +30,11 @@ def plotLOF():
     ax.yaxis.grid(True, which='major')  # x坐标轴的网格使用主刻度
 
     # plt.plot(x, y, color="blue", linestyle="-", label="cosine")
-    line1 = ax.plot(x, y, 'b.-')
-    ax.legend(line1, ('LOF-7d',))  # 多加一个逗号
-    # title("a strait line")
+    line1 = ax.plot(x, y, 'b.-',label="LOF_k=1")
+    line2 = ax.plot(x, y1, 'r.-',label="LOF_k=3")
+    plt.legend(loc='upper left')
+    # ax.legend(line1, ('LOF-7d',))  # 多加一个逗号
+    # plt.title("Lof Detection Time")
     plt.xlabel("nodes")
     plt.ylabel("time(s)")
     plt.show()
@@ -42,6 +45,7 @@ def plotFeatureExtract():
     x2 = [i*1.0/10000 for i in x]
     y = [63,125,278,579,2683]
     t = [0.451,0.575,0.610,0.912,1.394]
+    t1 = [0.161,0.314,0.316,0.941,3.589]
     # ax = plt.subplot(1,1,1)
     ax = plt.subplot(1,2,1)
     # ax.xaxis.set_major_locator(xmajorLocator)
@@ -68,12 +72,14 @@ def plotFeatureExtract():
     ax.yaxis.grid(True, which='major')  # x坐标轴的网格使用主刻度
 
     #plt.plot(x, y, color="blue", linestyle="-", label="cosine")
-    line1 = ax.plot(x2, t, 'b.',label="Classification Time")
+    line1 = ax.plot(x2, t, 'b.',label="GBKD-Forest Classification")
+    # line3 = ax.plot(x2,t1,'bx',label="SVM Classification")
     # ax.legend(line1, ('Classification Time',))  # 多加一个逗号
     # title("a strait line")
     x1 = [ i for i in range(0,5) ]
     y1 = [0.28*i +0.3397 for i in range(0,5) ]
     line2 = ax.plot(x1,y1,'r-',label="y=0.28x+0.3397")
+    #line4 = ax.plot(x1, y2, 'b-', label="y=0.4288x^2-0.7467x+0.5277")
     plt.legend(loc='upper left')
     plt.xlabel("Nodes(10k)")
     plt.ylabel("Time(s)")
@@ -116,10 +122,12 @@ def plotPrecision():
     plt.ylim([0.0, 1.05])
     plt.xlabel('Recall')
     plt.ylabel('Precision')
-    plt.title('Precision-Recall curve')
+    plt.title('Precision-Recall curve of GBKD-Forest')
     plt.legend(loc="lower right")
     plt.show()
 
 
 if __name__=="__main__":
-    plotPrecision()
+    #plotPrecision()
+    #plotLOF()
+    plotFeatureExtract()
